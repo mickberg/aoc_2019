@@ -36,8 +36,11 @@ int			readcode(char *filename, int **codep)
 	int		fd;
 	ssize_t	br;
 
-	if ((fd = open(filename, O_RDONLY)) < 0 ||
-		!(br = read(fd, buff, 1000)))
+	if (filename == NULL)
+		fd = 0;
+	else if ((fd = open(filename, O_RDONLY)) < 0)
+		return (0);
+	if (!(br = read(fd, buff, 1000)))
 		return (0);
 	buff[br] = '\0';
 

@@ -21,6 +21,9 @@ void	print_code(int len, int *intcode)
 	printf("\n");
 }
 
+// Get pointer to parameter based on mode
+// mode 1: parameter points to own value
+// mode 0: parameter points to index of intcode[pos]'s value
 int		*get_parameter(int *intcode, int pos, int mode)
 {
 	if (mode == 1)
@@ -31,27 +34,54 @@ int		*get_parameter(int *intcode, int pos, int mode)
 		return (NULL);
 }
 
-void	exec_intcode(int len, int *intcode)
+// Read and execute intcode
+void	exec_intcode(int *intcode)
 {
 	int		i;
 	int		opcode;
 	int		*arg1, *arg2, *arg3;
+	int		*input;
 
 	i = 0;
 	while (intcode[i] != 99)
 	{
+		// opcode is first 2 digits 
 		opcode = intcode[i] % 100;
 
+		// Get parameter for arguments
 		arg1 = get_parameter(intcode, i + 1, intcode[i] / 100 % 10);
 		arg2 = get_parameter(intcode, i + 2, intcode[i] / 1000 % 10);
 		arg3 = get_parameter(intcode, i + 3, intcode[i] / 10000 % 10);
 
+		// opcode 1: add arg1 and arg2 and put sum in arg3's address
 		if (opcode == 1)
 			*arg3 = (*arg2 + *arg1);
+		// opcode 1: multiply arg1 and arg2 and put result in arg3's address
 		else if (opcode == 2)
 			*arg3 = (*arg2 * *arg1);
-		else
+		// read input and put in arg1's address
+		else if (opcode == 3)
+		{
+			if (!readcode(NULL, &input))
+				exit(0);
+			*arg1 = input[0];
+			i += 2;
+			continue ;;
+		}
+		// output value at arg1
+		else if (opcode == 4)
+		{
+			printf(">%d\n", *arg1);
+			i += 2;
+			continue ;
+		}
+		else 
+		{
+			printf("Something wrong with the code??\n");
 			break;
+		}
+		
+		// each block of code is 4 indexes long (except input and output which are 2 long)
 		i += 4;
 	}
 }
@@ -69,8 +99,8 @@ int		main(int argc, char **argv)
 		return (0);
 
 	// execute code
-	exec_intcode(len, intcode);
+	exec_intcode(intcode);
 
-	print_code(len, intcode);
+	//print_code(len, intcode);
 	return (0);
 }
