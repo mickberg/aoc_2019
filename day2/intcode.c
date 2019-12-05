@@ -10,6 +10,17 @@
 
 #include "intcode.h"
 
+void	print_code(int len, int *intcode)
+{
+	int i;
+
+	printf("%d", intcode[0]);
+	i = 1;
+	while (i < len)
+		printf(", %d", intcode[i++]);
+	printf("\n");
+}
+
 void	exec_intcode(int len, int *intcode)
 {
 	int		i;
@@ -19,9 +30,9 @@ void	exec_intcode(int len, int *intcode)
 	{
 		if (intcode[i] == 1)
 			intcode[ intcode[i + 3] ] = intcode[ intcode[i + 1] ] + intcode[ intcode[i + 2] ];
-		if (intcode[i] == 2)
+		else if (intcode[i] == 2)
 			intcode[ intcode[i + 3] ] = intcode[ intcode[i + 1] ] * intcode[ intcode[i + 2] ];
-		else 
+		else
 			break;
 		i += 4;
 	}
@@ -38,15 +49,10 @@ int		main(int argc, char **argv)
 	// parse code from file
 	if ((len = readcode(argv[1], &intcode)) < 1)
 		return (0);
-	
+
 	// execute code
 	exec_intcode(len, intcode);
+	print_code(len, intcode);
 
-	printf("%d", intcode[0]);
-	int i = 1;
-	while (i < len)
-		printf(" ,%d", intcode[i++]);
-	printf("\n");
-	
 	return (0);
 }
