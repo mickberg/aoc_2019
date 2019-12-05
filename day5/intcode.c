@@ -39,7 +39,7 @@ void	exec_intcode(int *intcode)
 {
 	int		i;
 	int		opcode;
-	int		*arg1, *arg2, *arg3;
+	int		*arg1, *arg2, *instrp;
 	int		*input;
 
 	i = 0;
@@ -51,14 +51,16 @@ void	exec_intcode(int *intcode)
 		// Get parameter for arguments
 		arg1 = get_parameter(intcode, i + 1, intcode[i] / 100 % 10);
 		arg2 = get_parameter(intcode, i + 2, intcode[i] / 1000 % 10);
-		arg3 = get_parameter(intcode, i + 3, intcode[i] / 10000 % 10);
+		// Instruction pointer (where the result will be stored)
+		// SHOULD always be in position mode
+		instrp = get_parameter(intcode, i + 3, intcode[i] / 10000 % 10);
 
-		// opcode 1: add arg1 and arg2 and put sum in arg3's address
+		// opcode 1: add arg1 and arg2 and put sum in instrp's address
 		if (opcode == 1)
-			*arg3 = (*arg2 + *arg1);
-		// opcode 1: multiply arg1 and arg2 and put result in arg3's address
+			*instrp = (*arg2 + *arg1);
+		// opcode 1: multiply arg1 and arg2 and put result in instrp's address
 		else if (opcode == 2)
-			*arg3 = (*arg2 * *arg1);
+			*instrp = (*arg2 * *arg1);
 		// read input and put in arg1's address
 		else if (opcode == 3)
 		{
