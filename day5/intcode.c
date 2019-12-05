@@ -10,6 +10,7 @@
 
 #include "intcode.h"
 
+// Print integer array function used for testing
 void	print_code(int len, int *intcode)
 {
 	int		i;
@@ -39,7 +40,7 @@ void	exec_intcode(int *intcode)
 {
 	int		i;
 	int		opcode;
-	int		*arg1, *arg2, *instrp;
+	int		*arg1, *arg2, *respointer;
 	int		*input;
 
 	i = 0;
@@ -51,16 +52,16 @@ void	exec_intcode(int *intcode)
 		// Get parameter for arguments
 		arg1 = get_parameter(intcode, i + 1, intcode[i] / 100 % 10);
 		arg2 = get_parameter(intcode, i + 2, intcode[i] / 1000 % 10);
-		// Instruction pointer (where the result will be stored)
+		// res pointer (where the result will be stored)
 		// SHOULD always be in position mode
-		instrp = get_parameter(intcode, i + 3, intcode[i] / 10000 % 10);
+		respointer = get_parameter(intcode, i + 3, intcode[i] / 10000 % 10);
 
-		// opcode 1: add arg1 and arg2 and put sum in instrp's address
+		// opcode 1: add arg1 and arg2 and put sum in respointer's address
 		if (opcode == 1)
-			*instrp = (*arg2 + *arg1);
-		// opcode 1: multiply arg1 and arg2 and put result in instrp's address
+			*respointer = (*arg2 + *arg1);
+		// opcode 1: multiply arg1 and arg2 and put result in respointer's address
 		else if (opcode == 2)
-			*instrp = (*arg2 * *arg1);
+			*respointer = (*arg2 * *arg1);
 		// read input and put in arg1's address
 		else if (opcode == 3)
 		{
@@ -96,7 +97,7 @@ int		main(int argc, char **argv)
 	if (argc < 2)
 		return (0);
 
-	// parse code from file
+	// Read code from file and convert it to an integer array
 	if ((len = readcode(argv[1], &intcode)) < 1)
 		return (0);
 
