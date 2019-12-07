@@ -15,6 +15,7 @@ static int	convert(char *codestr, int **codep)
 
 	if (!(code = (int*)malloc(sizeof(int) * (len))))
 		return (0);
+	memset(code, 0, len);
 	
 	i = 0;
 	while (i < len)

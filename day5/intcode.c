@@ -15,10 +15,14 @@ void	print_code(int len, int *intcode)
 {
 	int		i;
 
+	printf("len: %d\n", len);
 	printf("%d", intcode[0]);
 	i = 1;
 	while (i < len)
-		printf(", %d", intcode[i++]);
+	{
+		printf(", %d", intcode[i]);
+		++i;
+	}
 	printf("\n");
 }
 
@@ -58,10 +62,16 @@ void	exec_intcode(int *intcode)
 
 		// opcode 1: add arg1 and arg2 and put sum in respointer's address
 		if (opcode == 1)
+		{
 			*respointer = (*arg2 + *arg1);
+			instrp += 4;
+		}
 		// opcode 1: multiply arg1 and arg2 and put result in respointer's address
 		else if (opcode == 2)
+		{
 			*respointer = (*arg2 * *arg1);
+			instrp += 4;
+		}
 		// read input and put in arg1's address
 		else if (opcode == 3)
 		{
@@ -69,23 +79,52 @@ void	exec_intcode(int *intcode)
 				exit(0);
 			*arg1 = input[0];
 			instrp += 2;
-			continue ;;
 		}
 		// output value at arg1
 		else if (opcode == 4)
 		{
 			printf(">%d\n", *arg1);
 			instrp += 2;
-			continue ;
+		}
+		// if arg1 is not 0 jump to position defined by parameter 2
+		else if (opcode == 5)
+		{
+			if (*arg1 != 0)
+				instrp = &intcode[ *arg2 ];
+			else
+				instrp += 3;	
+		}
+		// if arg1 is 0 jump to position defined by parameter 2
+		else if (opcode == 6)
+		{
+			if (*arg1 == 0)
+				instrp = &intcode[ *arg2 ];
+			else
+				instrp += 3;
+		}
+		// set value at parameter 3 to 1 if parameter 1 is less than par 2
+		else if (opcode == 7)
+		{
+			if (*arg1 < *arg2)
+				*respointer = 1;
+			else 
+				*respointer = 0;
+			instrp += 4;
+		}
+		// set value at parameter 3 to 1 if par 1 equals par 2
+		else if (opcode == 8)
+		{
+			if (*arg1 == *arg2)
+				*respointer = 1;
+			else
+				*respointer = 0;
+			instrp += 4;
 		}
 		else 
 		{
 			printf("Something wrong with the code?? opcode: %d\n", opcode);
 			break;
 		}
-		
-		// each block of code is 4 indexes long (except input and output which are 2 long)
-		instrp += 4;
 	}
 }
 
